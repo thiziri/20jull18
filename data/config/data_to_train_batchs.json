@@ -1,0 +1,7 @@
+{
+  "relations": "/home/thiziri/Documents/DOCTORAT/TESTS/TRAINED/collaborative_pseudo_labelling/data/labelers",
+  "batch_size": 64,
+  "queries": "/home/thiziri/Documents/DOCTORAT/TESTS/TRAINED/collaborative_pseudo_labelling/data/test_queries.txt",
+  "output": "/home/thiziri/Documents/DOCTORAT/TESTS/TRAINED/collaborative_pseudo_labelling/data/data_batches_npy",
+  "index": "/home/thiziri/Documents/DOCTORAT/COLLECTION/Indri_index/AP88"
+}

@@ -1,0 +1,72 @@
+{
+  "decription": {
+    "embed": "normalized word vectors",
+    "vocab_size": "number of unique words on the embeddings +1 (for unkowen words)",
+    "if_masking": "given labels will be represented differently",
+    "mask": "could be: bin, scalable or beans",
+    "labels_values": "list of all possible label values",
+    "beans_num": "number of beans if mask = beans",
+    "num_layers": "Number of the dense layers",
+    "top_rank": "Number of top results that would be re-ranked",
+    "save_period": "save weights every N epochs"
+  },
+  "main_configuration": {
+    "data_sets": {
+      "index":"/projets/iris/PROJETS/WEIR/collections/Indri_Index/Robust",
+      "query_maxlen": 20,
+      "doc_maxlen": 2000,
+      "vocab_size": 664604,
+      "embed_size": 300,
+      "embed": "/projets/iris/PROJETS/WEIR/data/collaborative_labelling/okapi_MQ/embed_robust_glove_norm",
+      "labels": "/projets/iris/PROJETS/WEIR/data/collaborative_labelling/okapi_MQ/labels",
+      "labelers_num": 1,
+      "train_queries":"/projets/iris/PROJETS/WEIR/data/collaborative_labelling/okapi_MQ/train_queries.txt",
+      "test_queries":"/projets/iris/PROJETS/WEIR/data/collaborative_labelling/okapi_MQ/test_queries.txt",
+      "if_masking":false,
+      "mask": "",
+      "labels_values": [0,1,2,3],
+      "beans_num": 0
+    },
+    "model": {
+      "parameters": {
+        "model_name": "collaborative_BiLSTM_label_out",
+        "hidden_activation": "tanh",
+        "output_activation": "sigmoid",
+        "optimizer": "adam",
+        "number_lstm_units": -1,
+        "lstm_dropout": -0.1,
+        "num_layers": 4,
+        "layers_size": [
+          100,
+          50,
+          20,
+          5
+        ],
+        "learning_rate": 0.001,
+        "dropout_rate": -0.1,
+        "predict_labels":false
+      },
+      "train": {
+        "train_embed": false,
+        "loss_function": "hinge",
+        "metrics": [
+          "accuracy"
+        ],
+        "batch_size": 64,
+        "epochs": 400,
+        "verbose":1,
+        "shuffle": true,
+        "weights": "/projets/iris/PROJETS/WEIR/models/collaborativeLabelling/weights/weights_",
+        "save_period": 10,
+        "train_details": "/projets/iris/PROJETS/WEIR/models/collaborativeLabelling/model"
+      },
+      "test":{
+        "test_period": 10,
+        "if_reranking": true,
+        "rank": "/projets/iris/PROJETS/WEIR/RUNS/2ndYear/indri_runs/2k_okapi_k1_1.2_b_0.75_k3_7_Robust",
+        "save_rank": "/projets/iris/PROJETS/WEIR/models/collaborativeLabelling/runs",
+        "top_rank": 2000
+      }
+    }
+  }
+}
