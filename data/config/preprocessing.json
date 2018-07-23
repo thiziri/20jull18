@@ -9,8 +9,8 @@
     "max_rank" : "The maximum top results number that would be taken"
   },
   "main_configuration" : {
-    "run_pool" : "/home/thiziri/Desktop/tst",
-    "relevance_judgements" : "",
+    "run_pool" : "",
+    "relevance_judgements" : "/home/thiziri/Documents/DOCTORAT/COLLECTION/QRELS/extractedQrels/qrels251_300AP88",
     "ranks" : [
       [1, 10],
       [11, 30],

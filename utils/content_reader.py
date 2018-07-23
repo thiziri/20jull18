@@ -8,7 +8,7 @@ class ContentReader:
     """
     def __init__(self, external_doc_ids, q_max_len, d_max_len, train_queries, index, padding=False):
         self.index = index
-        self.token2id = self.index.get_dictionary()
+        self.token2id, _, _ = self.index.get_dictionary()
         self.external_doc_ids = external_doc_ids
         self.q_max_len = q_max_len
         self.d_max_len = d_max_len

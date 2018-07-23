@@ -42,14 +42,14 @@ if __name__ == "__main__":
                             relation_labeler[labeler]] for relation in relations}  # combine different judgements
     labels = {relation: np.average([r/max(rel_label[relation]) if max(rel_label[relation]) > 0 else r
                                     for r in rel_label[relation]]) for relation in relations}
-    uniq_queries = set()
+
     uniq_documents = set()
     for rel in relations:
-        uniq_queries.add(rel[0])
         uniq_documents.add(rel[1])
 
     # extracted queries in .txt files
     queries = get_queries(config["queries"])
+    # print(queries)
 
     queries_length = {q: len(queries[q].split()) for q in queries}
 
@@ -66,10 +66,13 @@ if __name__ == "__main__":
             documents_length[extD_id] = len(content)
 
     for fold in listdir(config["split_data"]):
+        print(fold+"########################")
         train = [l.strip() for l in open(join(join(config["split_data"], fold), "train_.txt")).readlines()]
         valid = [l.strip() for l in open(join(join(config["split_data"], fold), "valid_.txt")).readlines()]
         train_relations = select_rel_by_qids(train, relations)
+        # print(train_relations)
         valid_relations = select_rel_by_qids(valid, relations)
+        # print(valid_relations)
         to_save = {"train": train_relations, "valid": valid_relations}
         os.mkdir(join(out, fold))
         for set_ in to_save:
@@ -105,6 +108,11 @@ if __name__ == "__main__":
                     list_line.append(np.array(relevance))
 
                     # output.write(str(list_line)+"\n")
-                    np.save(join(out_fold, str(id_b)+".npy"), np.array(list_line))
+                    if np.array(list_line).shape == (2,):
+                        np.save(join(out_fold, str(id_b)+".npy"), np.array(list_line))
+                    else:
+                        print("format error at batch: {}".format(id_b))
+                        print("shape: {} in set {} fold {}".format(np.array(list_line).shape, set_, fold))
+        # break
 
     print("Done")

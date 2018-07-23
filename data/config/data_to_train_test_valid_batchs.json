@@ -1,5 +1,5 @@
 {
-  "relations": "/home/thiziri/Documents/DOCTORAT/TESTS/TRAINED/collaborative_pseudo_labelling/data/labelers",
+  "relations": "/home/thiziri/Desktop/labelers",
   "batch_size": 64,
   "queries": "/home/thiziri/Documents/DOCTORAT/TESTS/TRAINED/collaborative_pseudo_labelling/data/test_queries.txt",
   "split_data": "/home/thiziri/Documents/DOCTORAT/COLLECTION/split_data/by_queries/AP88/5_crossValid",

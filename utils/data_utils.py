@@ -244,8 +244,8 @@ def run2relations(run_file, labels, scales, ranks, qrels=[], k=1000):
                     try:
                         rel = qrels[(q, doc)]
                     except:
-                        rel = 0
-                if i in range(k + 1):
+                        rel = -1
+                if i in range(k + 1) and rel != -1:
                     relations.insert(j, ((q, doc), rel))
                 else:
                     continue
