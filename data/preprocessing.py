@@ -18,6 +18,7 @@ if __name__ == '__main__':
     print(json.dumps(config, indent=2), end='\n')
 
     print("Reading run pool files ...")
+    """
     qrels = get_qrels(config["relevance_judgements"]) if bool(config["relevance_judgements"]) else []
     if config["run_pool"]:  # /home/thiziri/Desktop/tst
         for run in os.listdir(config["run_pool"]):
@@ -33,14 +34,15 @@ if __name__ == '__main__':
             for r in tqdm(qrels2relations):
                 out.write("{q}\t{d}\t{rel}\n".format(q=r[0][0], d=r[0][1], rel=r[1]))
         print(join(config["output_folder"], remove_extension(config["relevance_judgements"])))
+    """
 
     print("Parse queries ...")
-    """
-    write_queries_to_file(config["train_queries"], join(config["out_queries"], "train_queries.txt"),
-                          config["train_query_format"])
+
+    # write_queries_to_file(config["train_queries"], join(config["out_queries"], "train_queries.txt"),
+    #                      config["train_query_format"])
     write_queries_to_file(config["test_queries"], join(config["out_queries"], "test_queries.txt"),
                           config["test_query_format"])
-                          """
+
     print("Queries ok.")
     print('Done.')
 

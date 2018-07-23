@@ -10,20 +10,20 @@
   },
   "main_configuration" : {
     "run_pool" : "",
-    "relevance_judgements" : "/home/thiziri/Documents/DOCTORAT/COLLECTION/QRELS/extractedQrels/qrels251_300AP88",
+    "relevance_judgements" : "/home/thiziri/Documents/DOCTORAT/COLLECTION/QRELS/extractedQrels/qrels_Robust4",
     "ranks" : [
       [1, 10],
       [11, 30],
       [31, 50]
     ],
     "scales" : 3,
-    "output_folder" : "/home/thiziri/Desktop/labelers",
+    "output_folder" : "/home/thiziri/Desktop",
     "out_queries": "/home/thiziri/Desktop",
     "labels" : "multi_scale",
     "max_rank" : 100,
     "train_queries":"/home/thiziri/Documents/DOCTORAT/COLLECTION/trec_million_queries/MQ_queries",
     "train_query_format":"mq",
-    "test_queries":"/home/thiziri/Documents/DOCTORAT/COLLECTION/TOPICS/AP88",
+    "test_queries":"/home/thiziri/Documents/DOCTORAT/COLLECTION/TOPICS/robust4/top/topics",
     "test_query_format":"trec"
   }
 }

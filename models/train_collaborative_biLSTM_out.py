@@ -7,7 +7,7 @@ from keras.utils import plot_model
 
 sys.path.append("../utils")
 
-from model_utils import convert_embed_2_numpy, read_embedding
+from model_utils import convert_embed_2_numpy, read_embedding, make_parallel
 from model_utils import get_input_label_size, plot_history, get_optimizer
 from keras.layers import Dense, Input, LSTM, Dropout, Bidirectional, Embedding, Dot
 from keras.layers.normalization import BatchNormalization
@@ -18,7 +18,7 @@ from keras.utils.training_utils import multi_gpu_model
 
 
 if __name__ == '__main__':
-    config_file = "/home/thiziri/Desktop/collaborative_labels_out.json"  # sys.argv[1]
+    config_file = sys.argv[1]
     configure = json.load(open(config_file))
     config = configure["main_configuration"]
     config_data = config["data_sets"]
@@ -86,12 +86,10 @@ if __name__ == '__main__':
 
         # we'll store a copy of the model on *every* GPU and then combine
         # the results from the gradient updates on the CPU
-        with tf.device("/cpu:0"):
-            # initialize the model
-            model_gpu = model
+        model_gpu = make_parallel(model, G)
 
         # make the model parallel
-        model_gpu = multi_gpu_model(model_gpu, gpus=G)
+        # model_gpu = multi_gpu_model(model_gpu, gpus=G)
 
     model_gpu.compile(optimizer=optimizer, loss=config_model_train["loss_function"],
               metrics=config_model_train["metrics"])  # model
