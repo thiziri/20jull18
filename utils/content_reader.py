@@ -6,7 +6,7 @@ class ContentReader:
     """
     Reads content of a given doc/query content
     """
-    def __init__(self, external_doc_ids, q_max_len, d_max_len, train_queries, index, padding=False):
+    def __init__(self, external_doc_ids, train_queries, index, q_max_len=None, d_max_len=None, padding=False):
         self.index = index
         self.token2id, _, _ = self.index.get_dictionary()
         self.external_doc_ids = external_doc_ids

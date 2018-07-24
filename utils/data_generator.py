@@ -9,19 +9,14 @@ class DataGenerator(keras.utils.Sequence):
     Generates data for Keras
     :return: data generator object
     """
-    def __init__(self, data_list, index_dict, list_IDs, labels, relations_list, batch_size=32, shuffle=True,
-                 sizes=(10, 1000)):
+    def __init__(self, list_IDs, labels, input, batch_size=32, shuffle=True):
         # Initialization
         self.batch_size = batch_size
         self.labels = labels
         self.list_IDs = list_IDs
         self.shuffle = shuffle
+        self.input = input
         self.on_epoch_end()
-        self.relations = relations_list
-        self.data_num = 0
-        self.data_list = data_list
-        self.index_dict = index_dict
-        self.sizes = sizes
 
     def __len__(self):
         """
@@ -43,8 +38,7 @@ class DataGenerator(keras.utils.Sequence):
         list_IDs_temp = [self.list_IDs[k] for k in indexes]
 
         # Generate data
-        # X, y = self.__data_generation(list_IDs_temp)
-        X, y = self.__index_reader(list_IDs_temp)
+        X, y = self.__data_generation(list_IDs_temp)
 
         return X, y
 
@@ -58,48 +52,43 @@ class DataGenerator(keras.utils.Sequence):
             np.random.shuffle(self.indexes)
 
     def __data_generation(self, list_IDs_temp):
-        'Generates data containing batch_size samples'  # X : (n_samples, *dim, n_channels)
+        """
+        Generates data containing batch_size samples
+        """
+
         # Initialization
-        Xq = np.empty((self.batch_size, self.sizes[0]))
-        Xd = np.empty((self.batch_size, self.sizes[1]))
-        y = np.empty((self.batch_size), dtype=int)
+        Xq = []
+        Xd = []
+        y = []  # np.empty(self.batch_size, dtype=int)
 
         # Generate data
         for i, ID in enumerate(list_IDs_temp):
             # Store sample
-            Xq[i,] = np.load('path/to/data/' + ID + '.npy')
-            # same with Xd ...
+            q, d = np.load(join(self.input, str(ID) + '.npy'))
+            Xq.append(q)
+            Xd.append(d)
+            y.append(self.labels[ID])  # y[i,] = self.labels[ID]
 
-            # Store class
-            y[i] = self.labels[ID]
+        if len(Xq) != len(Xd):
+            print(list_IDs_temp)
 
-        return [Xq, Xd], np.array(y)
+        X = [np.array(pad_sequences(Xq)), np.array(pad_sequences(Xd))]
+        return X, np.array(y)  # y
 
-    def __index_reader(self, list_IDs_temp):
-        """
-        Reads the index dictionary and content list of documents
-        :param list_IDs_temp:
-        :return: tuple
-        """
-        # Initialization
-        y = []
-        v_q_words = []
-        v_d_words = []
 
-        # Read data
-        for i, ID in enumerate(list_IDs_temp):
-            q_words = self.data_list[self.index_dict[self.relations[ID][0]]]
-            v_q_words.append(q_words)
-            d_words = self.data_list[self.index_dict[self.relations[ID][1]]]
-            v_d_words.append(d_words)
-            y.append(self.labels[ID])
-
-        # v_d_words = self.pad_sequences(v_d_words)
-        # v_q_words = self.pad_sequences(v_q_words)
-
-        X = [np.array(v_q_words), np.array(v_d_words)]
-
-        return X, np.array(y)
+def pad_sequences(listoflists):
+    temp_list = []
+    len_max = int(sum([len(l) for l in listoflists])/len(listoflists))
+    for l in listoflists:
+        # print(l)
+        if len(l) < len_max:
+            temp_list.append(list(np.pad(l, (len_max - len(l), 0), "constant", constant_values=0)))
+            # print(temp_list)
+        elif len(l) > len_max:
+            temp_list.append(l[:len_max])
+        else:
+            temp_list.append(l)
+    return temp_list
 
 
 def line2batch_generator(input_file):
@@ -123,3 +112,37 @@ def npy2batch_generator(input_folder):
     while True:
         for f in listdir(input_folder):
             yield tuple(np.load(join(input_folder, f)))
+
+
+def npyLoader(npy_files, labels, batch_size):
+    """
+    Generator of batches from npy files
+    :param npy_files: list
+    :param labels: list
+    :param batch_size: int
+    :return:
+    """
+
+    files = listdir(npy_files)
+    L = len(files)
+
+    # this line is just to make the generator infinite, keras needs that
+    while True:
+
+        batch_start = 0
+        batch_end = batch_size
+
+        while batch_start < L:
+            limit = min(batch_end, L)
+            Xq, Xd = [], []
+            Y = []
+            for f in files[batch_start:limit]:
+                q, d = np.load(join(npy_files, f))
+                Xq.append(q)
+                Xd.append(d)
+                Y.append(labels[int(f.split('.')[0])])
+
+            yield ([np.array(pad_sequences(Xq)), np.array(pad_sequences(Xd))], np.array(Y))  # a tuple with two numpy arrays with batch_size samples
+
+            batch_start += batch_size
+            batch_end += batch_size

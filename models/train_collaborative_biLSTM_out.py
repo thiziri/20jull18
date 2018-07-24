@@ -1,5 +1,7 @@
 import sys
 import json
+import os
+import numpy as np
 import tensorflow as tf
 from keras.layers.merge import concatenate
 from keras.models import Model
@@ -13,7 +15,7 @@ from keras.layers import Dense, Input, LSTM, Dropout, Bidirectional, Embedding, 
 from keras.layers.normalization import BatchNormalization
 from os.path import join
 from keras import callbacks
-from data_generator import DataGenerator, line2batch_generator, npy2batch_generator
+from data_generator import DataGenerator, line2batch_generator, npy2batch_generator, npyLoader
 from keras.utils.training_utils import multi_gpu_model
 
 
@@ -102,8 +104,14 @@ if __name__ == '__main__':
     print("Saved model to disc.")
 
     print("Reading training data:")
-    training_generator = npy2batch_generator(config_data['input_train'])  # line2batch_generator(config_data['input_train'])
-    validation_generator = npy2batch_generator(config_data["input_valid"]) if config_data["input_valid"] else None
+    # training_generator = npy2batch_generator(config_data['input_train'])  # line2batch_generator(config_data['input_train'])
+    training_generator = DataGenerator(list_IDs=list(range(len(os.listdir(join(config_data['input_train'], "inputs"))))),
+                                       input=join(config_data['input_train'], "inputs"),
+                                       labels=list(np.load(join(config_data['input_train'], "labels.npy"))),
+                                       batch_size=config_model_train["batch_size"],
+                                       shuffle=True)
+    # validation_generator = npy2batch_generator(config_data["input_valid"]) if config_data["input_valid"] else None
+    validation_generator = None
 
     steps_per_epoch = int(config_data["num_samples"]/config_model_train["batch_size"])+1  # |relations|/batch_size
 
@@ -125,6 +133,9 @@ if __name__ == '__main__':
                                           verbose=config_model_train["verbose"],
                                           steps_per_epoch=steps_per_epoch,
                                           callbacks=[mc])  # model
+
+    # npyLoader(join(config_data['input_train'], "inputs"), list(np.load(join(config_data['input_train'], "labels.npy"))),
+    #          config_model_train["batch_size"])
 
     # save trained model
     # print("Saving model and its weights ...")
